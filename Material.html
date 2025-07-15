@@ -239,6 +239,7 @@
       }
 
       .output {
+        font-family: Arial, sans-serif;
         width: 100%;
         height: 100%;
         resize: none;
@@ -655,7 +656,7 @@ textarea::placeholder {
                <div class="floating-btn-container">
 
                  <button class="floating-chatgpt-btn reset-btn" onclick="resetAllFields()">
-                   ↻ Reset All
+                  Reset All
                  </button>
                  <button class="floating-chatgpt-btn" id="openCustomGPT">
                    Create with AI
@@ -687,7 +688,9 @@ textarea::placeholder {
       <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
 
 
-       <script>
+      <script>
+
+
 
 
 
@@ -703,20 +706,9 @@ function resetAllFields() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
         const optionQuantities = {};
 window.optionQuantities = optionQuantities;
+
 
 function saveToLocalStorage() {
   const inputs = document.querySelectorAll('select, textarea');
@@ -745,7 +737,6 @@ function saveQuantitiesToLocalStorage() {
 // Call this after any change
 document.addEventListener('change', saveToLocalStorage);
 document.addEventListener('input', saveToLocalStorage);
-
 
 
 
@@ -791,7 +782,31 @@ window.addEventListener('beforeunload', (event) => {
 
 
 
-         document.getElementById("Client").addEventListener("click", function() {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       document.getElementById("Client").addEventListener("click", function() {
   window.location.href = "index.html"});
 
   document.getElementById("Zoning").addEventListener("click", function() {
@@ -812,7 +827,7 @@ return;
 
 // Copy to clipboard first
 navigator.clipboard.writeText(prompt).then(() => {
-const customGPTURL = "https://chatgpt.com/g/g-686e2f64287081919d96a2dec8206a55-4-material-board";
+const customGPTURL = "https://chatgpt.com/g/g-686fbd793c8c8191a62421fb786529e6-4-material-board";
 window.open(customGPTURL, "_blank");
 alert("✅ Prompt copied to clipboard. Just paste (Ctrl+V) into the chat.");
 }).catch(() => {
@@ -882,6 +897,13 @@ alert("❌ Failed to copy prompt. Please copy it manually.");
     });
 
 
+    
+
+
+
+
+
+
       function normalizeId(name) {
         return name.replace(/\s+/g, '').toLowerCase();
       }
@@ -907,7 +929,19 @@ alert("❌ Failed to copy prompt. Please copy it manually.");
         const pinterestLabels = data[3]; // 👈 This is the new row you want to use
         const quant = data.slice(4)
         const promptLabels = data[1]; // ✅ clean labels from Row 2
+        window.row4Values = data[3]; // Row 4 = index 4
+
         window.promptLabels = promptLabels; // ✅ make accessible globally
+        
+const pinterestBlockFlags = data[3].map(cell => {
+  return cell?.trim().toLowerCase() === 'text' && cell.toLowerCase() === cell && cell.length > 0;
+});
+
+window.pinterestBlockFlags = data[3].map((_, i) => {
+  // block only if cell background was red
+  return data[3][i]?.trim().toLowerCase() === 'text' && data[3][i].toLowerCase() === data[3][i];
+});
+
 
 
         // const parentHeaders = data[0]; // Row 1 (still header group)
@@ -1061,7 +1095,7 @@ select.setAttribute('data-pinterest', pinterestLabel); // ✅ ADD THIS
       moveSelectedOptionsToTop(select);
       if (quantityContainer) {
       updateQuantitiesForSelect(select, quantityContainer, id);
-      
+
       }
 
 
@@ -1217,6 +1251,7 @@ function restoreFromLocalStorage() {
 }
 
 
+
 function restoreQuantitiesFromLocalStorage() {
   const saved = localStorage.getItem('optionQuantities');
   if (!saved) return;
@@ -1239,10 +1274,16 @@ function restoreQuantitiesFromLocalStorage() {
 }
 
 // Run this after all elements are rendered
-setTimeout(() => {
-  restoreFromLocalStorage();              // sets values
-  restoreQuantitiesFromLocalStorage();    // sets counters + regenerates prompt
-}, 1100);
+const wasReset = sessionStorage.getItem('resetNow') === 'true';
+
+if (!wasReset) {
+  setTimeout(() => {
+    restoreFromLocalStorage();
+    restoreQuantitiesFromLocalStorage();
+  }, 1100);
+} else {
+  sessionStorage.removeItem('resetNow'); // clear flag so next load behaves normally
+}
 
 
 
@@ -1254,99 +1295,46 @@ setTimeout(() => {
 
 
       document.getElementById('labelsBox').addEventListener('click', function (e) {
-  const tag = e.target.closest('.label-tag');
-  if (!tag) return;
+      const tag = e.target.closest('.label-tag');
+      if (!tag) return;
 
-  // If remove button clicked
-  if (e.target.classList.contains('remove')) {
-    const field = tag.getAttribute('data-field');
-    const value = tag.getAttribute('data-value');
-    if (field && value) {
-      removeLabel(field, value);
-    }
-    return;
-  }
-
-  // Else, tag body clicked: Open Pinterest
-  const value = tag.getAttribute('data-value');
-  if (value) {
-    const pinterestURL = `https://www.pinterest.com/search/pins/?q=${encodeURIComponent(value)}`;
-    window.open(pinterestURL, '_blank');
-  }
-});
-
-
-
-
-function autosizePlaceholderTextareas(extraPadding = 1) {
-  const textareas = document.querySelectorAll('textarea');
-
-  textareas.forEach(textarea => {
-    // Function to resize based on scrollHeight
-    const resize = () => {
-      textarea.style.height = '20px';//auto
-      // textarea.style.height = (textarea.scrollHeight + extraPadding) + 'px';
-    };
-
-    // Initial placeholder-based sizing
-    const placeholder = textarea.getAttribute('placeholder');
-    if (placeholder && !textarea.value.trim()) {
-      const mirror = document.createElement('div');
-      const computed = window.getComputedStyle(textarea);
-
-      Object.assign(mirror.style, {
-        position: 'absolute',
-        visibility: 'hidden',
-        whiteSpace: 'pre-wrap',
-        wordWrap: 'break-word',
-        overflowWrap: 'break-word',
-        padding: computed.padding,
-        border: computed.border,
-        font: computed.font,
-        lineHeight: computed.lineHeight,
-        width: textarea.offsetWidth + 'px',
-      });
-
-      mirror.textContent = placeholder;
-
-      document.body.appendChild(mirror);
-      const placeholderHeight = mirror.scrollHeight + extraPadding;
-      textarea.style.height = placeholderHeight + 'px';
-      document.body.removeChild(mirror);
-    } else {
-      // In case it already has value
-      resize();
-    }
-
-    // Dynamic resizing on input
-    textarea.addEventListener('input', resize);
-
-    // Optional: Resize again on window resize (e.g., responsive layout)
-    window.addEventListener('resize', resize);
-  });
-}
-
-
-
-
-
-
-
-
-
-
-
-      function getLabelledImages() {
-        return Array.from(document.querySelectorAll('.preview-image-wrapper')).map(wrapper => {
-          const img = wrapper.querySelector('img');
-          const label = wrapper.querySelector('.image-label')?.innerText?.trim();
-          if (img && label) {
-            return { label, file: dataURLtoFile(img.src, `${label}.png`) };
-          }
-          return null;
-        }).filter(Boolean);
+      // 🗑 Remove logic
+      if (e.target.classList.contains('remove')) {
+      const field = tag.getAttribute('data-field');
+      const value = tag.getAttribute('data-value');
+      if (field && value) removeLabel(field, value);
+      return;
       }
 
+      // 🧠 Pinterest search (dynamic, same as icon)
+      const section = tag.closest('.form-card');
+      const tagElements = section.querySelectorAll('.label-tag');
+      if (tagElements.length === 0) return;
+
+      const grouped = {};
+      tagElements.forEach(tag => {
+      const value = tag.getAttribute('data-value')?.trim();
+      const header = tag.getAttribute('data-pinterest')?.trim() || tag.getAttribute('data-header')?.trim();
+      if (!grouped[header]) grouped[header] = [];
+      grouped[header].push(value);
+      });
+
+      const searchParts = Object.entries(grouped).map(([header, values]) => {
+      const match = header.match(/\[(.*?)\]/);
+      if (match) {
+      return header.replace(/\[.*?\]/, values.join(', ')).trim();
+      } else {
+      return values.join(', ').trim();
+      }
+      });
+
+      const query = searchParts.join(' ');
+      const pinterestURL = `https://www.pinterest.com/search/pins/?q=${encodeURIComponent(query)}`;
+      window.open(pinterestURL, '_blank');
+      });
+
+
+  
 
 
       
@@ -1379,7 +1367,7 @@ function autosizePlaceholderTextareas(extraPadding = 1) {
           if (labelled.length === 0) {
           // Proceed without images
           const prompt = document.getElementById('finalPrompt').value;
-          const chatGPTURL = `https://chat.openai.com/?prompt=${encodeURIComponent(prompt)}`;
+          const chatGPTURL = `https://chatgpt.com/g/g-686e0c310aac81919183673ef60ae018-1-client-persona-gpt`;
           window.open(chatGPTURL, "_blank");
           return;
           }
@@ -1522,16 +1510,16 @@ function getValueByLabel(labelInBrackets) {
 }
 
 
+console.log("🔁 generatePrompt triggered");
 
 
 
 
         
  function generatePrompt() {
-  const lines = [];
   console.log("Field IDs in optionQuantities:", Object.keys(window.optionQuantities));
 
-  
+  const lines = [];
 
   const allInputs = document.querySelectorAll('select, textarea');
 
@@ -1540,6 +1528,9 @@ function getValueByLabel(labelInBrackets) {
                   el.getAttribute('data-pinterest')?.trim() ||
                   el.getAttribute('data-header')?.trim();
     if (!label) return;
+
+    if (window.pinterestBlockFlags && window.pinterestBlockFlags[i] === true) return;
+
 
     const fieldId = normalizeId(el.id);
     const quantityMap = window.optionQuantities?.[fieldId] || {};
@@ -1570,13 +1561,14 @@ function getValueByLabel(labelInBrackets) {
     }
   });
 
-  if (!isManuallyEdited) {
+ if (!isManuallyEdited) {
   const promptArea = document.getElementById('finalPrompt');
   if (promptArea) {
     promptArea.value = lines.join('\n\n');
-  }}
+  }
 }
 
+}
 
 
     
@@ -1618,13 +1610,12 @@ if (!optionQuantities[fieldId][val]) {
     const v = parseInt(qty.value, 10);
     if (!isNaN(v) && v >= 1) {
     optionQuantities[fieldId][val] = v;
-    // qty.setAttribute('data-value', val); // ❗ CRITICAL — needed for mapping
-
+ 
     generatePrompt();
-    updateStructuredView();
-    updatePinterestQuery();
     saveQuantitiesToLocalStorage();
 
+    updateStructuredView();
+    updatePinterestQuery();
     }
     });
 
@@ -1645,117 +1636,120 @@ if (!optionQuantities[fieldId][val]) {
 
 
       function updateStructuredView() {
-  const groupedContainer = document.getElementById('labelsBox');
-  groupedContainer.innerHTML = '';
+      const groupedContainer = document.getElementById('labelsBox');
+      groupedContainer.innerHTML = '';
 
-  const formGroups = document.querySelectorAll('.form-group');
-  formGroups.forEach(group => {
-    const header = group.querySelector('div');
-    if (!header) return;
-    const groupTitle = header.childNodes[0].textContent.trim();
-    const fields = group.querySelectorAll('select, textarea');
+      const formGroups = document.querySelectorAll('.form-group');
+      formGroups.forEach(group => {
+      const header = group.querySelector('div');
+      if (!header) return;
+      const groupTitle = header.childNodes[0].textContent.trim();
+      const fields = group.querySelectorAll('select, textarea');
 
-    const selectedValues = [];
+      const validTags = [];
 
-    fields.forEach(el => {
+      fields.forEach(el => {
       const fieldId = el.id;
+      const inputEl = document.getElementById(fieldId);
+
+      const fieldIndex = window.promptLabels.findIndex(
+      lbl => normalizeId(lbl) === normalizeId(fieldId)
+      );
+      const row4Value = (fieldIndex !== -1) ? (window.row4Values?.[fieldIndex]?.trim()) : null;
+
+      if (!row4Value) return; // 🚫 Skip field if Row 4 is empty
+
       if (el.tagName === 'SELECT' && el.multiple) {
-        const options = Array.from(el.selectedOptions);
-        if (options.length) {
-          selectedValues.push({
-            field: fieldId,
-            values: options.map(opt => opt.value.trim())
-          });
-        }
-      } else if ((el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') && el.value.trim()) {
-        selectedValues.push({
-          field: fieldId,
-          values: [el.value.trim()]
-        });
-      }
-    });
-
-    if (selectedValues.length === 0) return;
-
-    // Create one card for the group
-    const section = document.createElement('div');
-    section.classList.add('form-card');
-
-    const title = document.createElement('div');
-    title.classList.add('form-card-header');
-
-    // Pinterest Icon
-    const pinterestIcon = document.createElement('i');
-    pinterestIcon.className = 'fa-brands fa-pinterest';
-    pinterestIcon.style.cursor = 'pointer';
-    pinterestIcon.style.float = 'right';
-    pinterestIcon.title = 'Search on Pinterest';
-    pinterestIcon.style.color = '#E60023';
-    pinterestIcon.style.fontSize = '20px';
-
-    pinterestIcon.addEventListener('click', () => {
-  const tagElements = section.querySelectorAll('.label-tag');
-  if (tagElements.length === 0) return;
-
-  const grouped = {};
-
-  tagElements.forEach(tag => {
-    const value = tag.getAttribute('data-value').trim();
-   const header = tag.getAttribute('data-pinterest')?.trim() || tag.getAttribute('data-header').trim();
-
-
-    if (!grouped[header]) grouped[header] = [];
-    grouped[header].push(value);
-  });
-
-  // Build the search parts
-  const searchParts = Object.entries(grouped).map(([header, values]) => {
-    // Look for brackets
-    const match = header.match(/\[(.*?)\]/);
-    if (match) {
-      // Replace [anything] with joined values
-      const replaced = header.replace(/\[.*?\]/, values.join(', '));
-      return replaced.trim();
-    } else {
-      // No brackets, append values after header
-      return `${header} ${values.join(', ')}`.trim();
-    }
-  });
-  
-
-  const query = searchParts.join(' ');
-
-  const pinterestURL = `https://www.pinterest.com/search/pins/?q=${encodeURIComponent(query)}`;
-  window.open(pinterestURL, '_blank');
-});
-
-
-    title.textContent = groupTitle;
-    title.appendChild(pinterestIcon);
-    section.appendChild(title);
-
-    // Append all tags under this card
-    selectedValues.forEach(({ field, values }) => {
-      values.forEach(value => {
-        const tag = document.createElement('span');
-        tag.className = 'label-tag';
-        tag.setAttribute('data-field', normalizeId(field));
-        tag.setAttribute('data-value', value);
-
-        const inputEl = document.getElementById(field);
-        const headerText = inputEl ? inputEl.getAttribute('data-header') : '';
-
-        tag.setAttribute('data-header', headerText);
-        tag.setAttribute('data-pinterest', inputEl?.getAttribute('data-pinterest') || headerText); // ✅
-
-        tag.innerHTML = `${value} <span class="remove" style="cursor:pointer;">×</span>`;
-        section.appendChild(tag);
+      const options = Array.from(el.selectedOptions);
+      options.forEach(opt => {
+      const value = opt.value.trim();
+      if (value) {
+      validTags.push({
+      field: fieldId,
+      value,
+      label: row4Value
       });
-    });
+      }
+      });
+      } else if ((el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') && el.value.trim()) {
+      validTags.push({
+      field: fieldId,
+      value: el.value.trim(),
+      label: row4Value
+      });
+      }
+      });
 
-    groupedContainer.appendChild(section);
-  });
-}
+      // 🚫 Skip rendering the entire card if no valid tags
+      if (validTags.length === 0) return;
+
+      // ✅ Create the card
+      const section = document.createElement('div');
+      section.classList.add('form-card');
+
+      const title = document.createElement('div');
+      title.classList.add('form-card-header');
+
+      // Pinterest Icon
+      const pinterestIcon = document.createElement('i');
+      pinterestIcon.className = 'fa-brands fa-pinterest';
+      pinterestIcon.style.cursor = 'pointer';
+      pinterestIcon.style.float = 'right';
+      pinterestIcon.title = 'Search on Pinterest';
+      pinterestIcon.style.color = '#E60023';
+      pinterestIcon.style.fontSize = '20px';
+
+      pinterestIcon.addEventListener('click', () => {
+      const tagElements = section.querySelectorAll('.label-tag');
+      if (tagElements.length === 0) return;
+
+      const grouped = {};
+      tagElements.forEach(tag => {
+      const value = tag.getAttribute('data-value').trim();
+      const header = tag.getAttribute('data-pinterest')?.trim() || tag.getAttribute('data-header').trim();
+
+      if (!grouped[header]) grouped[header] = [];
+      grouped[header].push(value);
+      
+      });
+
+      const searchParts = Object.entries(grouped).map(([header, values]) => {
+      const match = header.match(/\[(.*?)\]/);
+      if (match) {
+      return header.replace(/\[.*?\]/, values.join(', ')).trim();
+      } else {
+      return values.join(', ').trim();
+      }
+      });
+
+      const query = searchParts.join(' ');
+      const pinterestURL = `https://www.pinterest.com/search/pins/?q=${encodeURIComponent(query)}`;
+      window.open(pinterestURL, '_blank');
+      });
+
+      title.textContent = groupTitle;
+      title.appendChild(pinterestIcon);
+      section.appendChild(title);
+
+      // ✅ Append all valid tags
+      validTags.forEach(({ field, value, label }) => {
+      const tag = document.createElement('span');
+      tag.className = 'label-tag';
+      tag.setAttribute('data-field', normalizeId(field));
+      tag.setAttribute('data-value', value);
+
+      const inputEl = document.getElementById(field);
+      const headerText = inputEl ? inputEl.getAttribute('data-header') : '';
+
+      tag.setAttribute('data-header', headerText);
+      tag.setAttribute('data-pinterest', inputEl?.getAttribute('data-pinterest') || headerText);
+      tag.innerHTML = `${value} <span class="remove" style="cursor:pointer;">×</span>`;
+      section.appendChild(tag);
+      });
+
+      groupedContainer.appendChild(section);
+      });
+      }
 
       
       function removeSelection(fieldId, value) {
@@ -1830,7 +1824,7 @@ if (!optionQuantities[fieldId][val]) {
           document.querySelector('#searchBoxContainer input').value = keywords;
     }
 
-  function removeLabel(fieldIdOrLabel, valueToRemove) {
+      function removeLabel(fieldIdOrLabel, valueToRemove) {
   const fieldKey = normalizeId(fieldIdOrLabel); // always normalize
   const el = document.getElementById(fieldKey);
 
@@ -1869,37 +1863,116 @@ if (!optionQuantities[fieldId][val]) {
   }
 }
 
-    
-    function updatePinterestQuery() {
-  const allInputs = document.querySelectorAll('select, textarea');
-  const parts = [];
 
-  allInputs.forEach(el => {
-    const label = el.getAttribute('data-pinterest') || el.getAttribute('data-header');
-    if (!label) return;
 
-    let values = [];
 
-    if (el.tagName === 'SELECT' && el.multiple) {
-      values = Array.from(el.selectedOptions).map(opt => opt.value.trim()).filter(Boolean);
-    } else if (el.tagName === 'TEXTAREA') {
-      const val = el.value.trim();
-      if (val) values = [val];
+
+function autosizePlaceholderTextareas(extraPadding = 1) {
+  const textareas = document.querySelectorAll('textarea');
+
+  textareas.forEach(textarea => {
+    // Function to resize based on scrollHeight
+    const resize = () => {
+      textarea.style.height = '20px';//auto
+      // textarea.style.height = (textarea.scrollHeight + extraPadding) + 'px';
+    };
+
+    // Initial placeholder-based sizing
+    const placeholder = textarea.getAttribute('placeholder');
+    if (placeholder && !textarea.value.trim()) {
+      const mirror = document.createElement('div');
+      const computed = window.getComputedStyle(textarea);
+
+      Object.assign(mirror.style, {
+        position: 'absolute',
+        visibility: 'hidden',
+        whiteSpace: 'pre-wrap',
+        wordWrap: 'break-word',
+        overflowWrap: 'break-word',
+        padding: computed.padding,
+        border: computed.border,
+        font: computed.font,
+        lineHeight: computed.lineHeight,
+        width: textarea.offsetWidth + 'px',
+      });
+
+      mirror.textContent = placeholder;
+
+      document.body.appendChild(mirror);
+      const placeholderHeight = mirror.scrollHeight + extraPadding;
+      textarea.style.height = placeholderHeight + 'px';
+      document.body.removeChild(mirror);
+    } else {
+      // In case it already has value
+      resize();
     }
 
-    values.forEach(v => {
-      // parts.push(`${label} ${v}`);
-      parts.push(`${v}`);
-    });
-  });
+    // Dynamic resizing on input
+    textarea.addEventListener('input', resize);
 
-  const searchBox = document.getElementById('pinterestSearch');
-  if (parts.length === 0) {
-    searchBox.value = 'photorealistic office interior inspiration';
-  } else {
-    searchBox.value = parts.join(' ');
-  }
+    // Optional: Resize again on window resize (e.g., responsive layout)
+    window.addEventListener('resize', resize);
+  });
 }
+
+
+
+
+
+
+
+
+
+
+
+    function updatePinterestQuery() {
+    const allFields = document.querySelectorAll('select, textarea, input');
+    const promptLabels = window.promptLabels || [];
+    const row4Values = window.row4Values || [];
+
+    const phraseParts = [];
+
+    allFields.forEach(field => {
+    const fieldId = field.id;
+    const index = promptLabels.findIndex(lbl => normalizeId(lbl) === normalizeId(fieldId));
+    if (index === -1) return;
+
+    const row4 = row4Values[index]?.trim();
+    if (!row4 && !field.value?.trim()) return;
+
+
+    let rawValue = '';
+    if (field.tagName === 'SELECT' && field.multiple) {
+    rawValue = Array.from(field.selectedOptions).map(opt => opt.value.trim()).filter(Boolean).join(', ');
+    } else {
+    rawValue = field.value.trim();
+    }
+
+    const hasPlaceholder = row4.includes('[') && row4.includes(']');
+
+    // If it's a placeholder template but no value filled, skip
+    if (hasPlaceholder && !rawValue) return;
+
+    const finalPhrase = hasPlaceholder
+    ? row4.replace(/\[(.*?)\]/g, (_, label) => rawValue)
+    : row4;
+
+    phraseParts.push(finalPhrase.trim());
+    });
+
+    // Join into one search sentence
+    const finalQuery = phraseParts.length > 0
+    ? phraseParts.join(' ')
+    : 'photorealistic office interior inspiration';
+
+    // Update input box
+    const searchBox = document.getElementById('pinterestSearch');
+    if (searchBox) {
+    searchBox.value = finalQuery;
+    }
+   
+
+    }
 
     document.querySelectorAll('select, textarea').forEach(el => {
       if (el.id === 'finalPrompt') return; // ⛔️ Skip the output textarea
