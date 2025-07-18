@@ -1,6 +1,8 @@
       <!DOCTYPE html>
       <html lang="en">
       <head>
+        <script src="https://cdn.jsdelivr.net/npm/dexie@3.2.3/dist/dexie.min.js"></script>
+
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -736,8 +738,21 @@ function resetAllFields() {
         const optionQuantities = {};
 window.optionQuantities = optionQuantities;
 
+// Initialize tabId once per tab
+if (!sessionStorage.getItem('tabId')) {
+  sessionStorage.setItem('tabId', crypto.randomUUID());
+}
+const tabId = sessionStorage.getItem('tabId');
 
-function saveToLocalStorage() {
+// Setup Dexie
+const db = new Dexie("PromptBuilderDB");
+db.version(1).stores({
+  formStates: "++id, tabId, timestamp"
+});
+
+
+
+async function saveToDexie() {
   const inputs = document.querySelectorAll('select, textarea');
   const savedData = {};
 
@@ -750,20 +765,25 @@ function saveToLocalStorage() {
     } else if (el.tagName === 'TEXTAREA') {
       savedData[key] = el.value;
     }
-  }); 
+  });
 
-  localStorage.setItem('formValues', JSON.stringify(savedData));
+  // Include quantities
+  savedData.__quantities = { ...window.optionQuantities };
+
+  await db.formStates.put({
+    tabId,
+    timestamp: Date.now(),
+    data: savedData
+  });
 }
 
-
-
-function saveQuantitiesToLocalStorage() {
-  localStorage.setItem('optionQuantities', JSON.stringify(optionQuantities));
-}
+// function saveQuantitiesToLocalStorage() {
+//   localStorage.setItem('optionQuantities', JSON.stringify(optionQuantities));
+// }
 
 // Call this after any change
-document.addEventListener('change', saveToLocalStorage);
-document.addEventListener('input', saveToLocalStorage);
+document.addEventListener('change', saveToDexie);
+document.addEventListener('input', saveToDexie);
 
 
 
@@ -853,7 +873,7 @@ return;
 
 // Copy to clipboard first
 navigator.clipboard.writeText(prompt).then(() => {
-const customGPTURL = "https://chatgpt.com/g/g-686fbc2a82a8819196353068cced7eb3-1-client-persona";
+const customGPTURL = "https://chatgpt.com/g/g-686e0c310aac81919183673ef60ae018-1-client-persona-gpt";
 window.open(customGPTURL, "_blank");
 alert("✅ Prompt copied to clipboard. Just paste (Ctrl+V) into the chat.");
 }).catch(() => {
@@ -1255,11 +1275,13 @@ searchWrapper.appendChild(selectWrapper);
         autosizePlaceholderTextareas(-10);// adds 6px of extra space
       };
 
-function restoreFromLocalStorage() {
-  const saved = localStorage.getItem('formValues');
-  if (!saved) return;
-  const data = JSON.parse(saved);
+async function restoreFromDexie() {
+  const record = await db.formStates.where('tabId').equals(tabId).last();
+  if (!record?.data) return;
 
+  const data = record.data;
+
+  // Restore input values
   document.querySelectorAll('select, textarea').forEach(el => {
     const key = el.getAttribute('data-header') || el.id;
     if (!key || !(key in data)) return;
@@ -1272,44 +1294,47 @@ function restoreFromLocalStorage() {
       el.value = data[key];
     }
 
-    // Trigger UI updates
     el.dispatchEvent(new Event('change'));
   });
+
+  // Restore optionQuantities if available
+  if (data.__quantities) {
+    Object.assign(window.optionQuantities, data.__quantities);
+
+    // Update counters
+    document.querySelectorAll('select[multiple]').forEach(select => {
+      const fieldId = normalizeId(select.id);
+      const container = select.closest('.search-wrapper')?.querySelector('.quantity-container');
+      if (container && window.optionQuantities[fieldId]) {
+        updateQuantitiesForSelect(select, container, fieldId);
+      }
+    });
+  }
+
+  // Regenerate prompts or tags if needed
+  generatePrompt();
+  updateStructuredView();
+  updatePinterestQuery();
 }
 
 
 
-function restoreQuantitiesFromLocalStorage() {
-  const saved = localStorage.getItem('optionQuantities');
-  if (!saved) return;
 
-  const parsed = JSON.parse(saved);
-  Object.assign(optionQuantities, parsed);
 
-  // 🔁 After restoring data, refresh the quantity UI and prompt
-  document.querySelectorAll('select[multiple]').forEach(select => {
-    const fieldId = normalizeId(select.id);
-    const container = select.closest('.search-wrapper')?.querySelector('.quantity-container');
-    if (container && optionQuantities[fieldId]) {
-      updateQuantitiesForSelect(select, container, fieldId);
-    }
-  });
 
-  generatePrompt(); // ✅ Refresh prompt output after setting quantities
-  updateStructuredView?.();
-  updatePinterestQuery?.();
-}
+
 
 // Run this after all elements are rendered
 const wasReset = sessionStorage.getItem('resetNow') === 'true';
 
 if (!wasReset) {
-  setTimeout(() => {
-    restoreFromLocalStorage();
-    restoreQuantitiesFromLocalStorage();
+  setTimeout(async () => {
+    await restoreFromDexie();
+    restoreQuantitiesFromLocalStorage(); // still uses localStorage unless you Dexie it too
   }, 1100);
-} else {
-  sessionStorage.removeItem('resetNow'); // clear flag so next load behaves normally
+}
+ else {
+  sessionStorage.removeItem('resetNow'); // clear flag so next load behaves normally  
 }
 
 
@@ -1321,7 +1346,7 @@ if (!wasReset) {
 
 
 
-      document.getElementById('labelsBox').addEventListener('click', function (e) {
+    document.getElementById('labelsBox').addEventListener('click', function (e) {
       const tag = e.target.closest('.label-tag');
       if (!tag) return;
 
@@ -1337,18 +1362,17 @@ if (!wasReset) {
       const section = tag.closest('.form-card');
       const tagElements = section.querySelectorAll('.label-tag');
       if (tagElements.length === 0) return;
+    const grouped = {};
+    const value = tag.getAttribute('data-value')?.trim();
+    const header = tag.getAttribute('data-pinterest')?.trim() || tag.getAttribute('data-header')?.trim();
+    if (!value || !header) return;
 
-      const grouped = {};
-      const value = tag.getAttribute('data-value')?.trim();
-const header = tag.getAttribute('data-pinterest')?.trim() || tag.getAttribute('data-header')?.trim();
-if (!value || !header) return;
+    const query = header.includes('[')
+    ? header.replace(/\[.*?\]/, value)
+    : `${header} ${value}`;
 
-const query = header.includes('[')
-  ? header.replace(/\[.*?\]/, value)
-  : `${header} ${value}`;
-
-const pinterestURL = `https://www.pinterest.com/search/pins/?q=${encodeURIComponent(query)}`;
-window.open(pinterestURL, '_blank');
+    const pinterestURL = `https://www.pinterest.com/search/pins/?q=${encodeURIComponent(query)}`;
+    window.open(pinterestURL, '_blank');
 
 
       const searchParts = Object.entries(grouped).map(([header, values]) => {
@@ -1360,6 +1384,9 @@ window.open(pinterestURL, '_blank');
       }
       });
 
+      // const query = searchParts.join(' ');
+      // const pinterestURL = `https://www.pinterest.com/search/pins/?q=${encodeURIComponent(query)}`;
+      window.open(pinterestURL, '_blank');
       });
 
 
@@ -2032,6 +2059,21 @@ const rightPanel = document.querySelector('.right-panel');
   });
 }
 
+// 1. Run once when DOM is ready (initial load)
+window.addEventListener('DOMContentLoaded', () => {
+  restoreFromLocalStorage();
+  restoreQuantitiesFromLocalStorage();
+  generatePrompt();              // ✅ this fills the prompt on first load
+  updateStructuredView();
+  updatePinterestQuery();
+});
+
+// 2. Run again when tab regains focus (after switching)
+window.addEventListener('focus', () => {
+  generatePrompt();              // ✅ acts as backup refresher
+  updateStructuredView();
+  updatePinterestQuery();
+});
 
 
 
@@ -2039,7 +2081,6 @@ const rightPanel = document.querySelector('.right-panel');
       </script>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-        <script src="syncForm.js"></script>
 
 
 
