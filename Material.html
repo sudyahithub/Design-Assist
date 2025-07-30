@@ -10,10 +10,10 @@
         <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
         <style>
           body {
-            font-family: Arial, sans-serif;
+            font-family: Arial, sans-serif!important;
             /* font-size: 18px; */
             padding: 1rem;
-            background-color: #111;
+            background-color: #f4f2f1;
             color: white;
             overflow: hidden;
           }
@@ -38,10 +38,22 @@
           max-width: 20%;
           }
 
-          .form-group textarea{
-            max-width: 95%;
+          ::placeholder{
+            font-family: Arial, sans-serif;
           }
-          
+
+          .form-group textarea{
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1);
+            max-width: 95%;
+            color: black;
+            background-color: #F4F2F1;
+            border: none;
+          }
+          textarea:focus,
+          input[type="text"]:focus {
+          border: 1px solid #F0BD44 !important; /* or #ccc for soft gray */
+          outline: red !important;
+          }
 
           
           /* Scrollbar */
@@ -54,19 +66,19 @@
           }
 
           ::-webkit-scrollbar-track {
-            background-color: #1a1a1a;
+            background-color: #f8f8f8;
             border-radius: 10px;
           }
 
           ::-webkit-scrollbar-thumb {
-            background-color: #555;
+            background-color: rgb(197, 197, 197);
             border-radius: 10px;
-            border: 2px solid #1a1a1a; /* creates spacing around thumb */
+            border: 2px solid #e6e6e6; /* creates spacing around thumb */
             transition: background-color 0.3s ease;
           }
 
           ::-webkit-scrollbar-thumb:hover {
-            background-color: #888;
+            background-color: #F0BD44;
           }
 
           /* Optional: Fade into background */
@@ -78,6 +90,7 @@
           .form-section {
             display: flex;
             flex-direction: column;
+            
             gap: 1rem;
             width: 100%;
           }
@@ -91,8 +104,8 @@
             padding: 0.5rem;
             border-radius: 5px;
             border: 1px solid #666;
-            background: black;
-            color: #A2A2A2;
+            background: #F4F2F1;
+            color: #666;
             /* font-size: 16px; */
           }
           
@@ -129,20 +142,25 @@
       .pinterest-row input {
       flex: 1;
       padding: 0.5rem 1rem;
-      background-color: #1a1a1a; /* Dark background */
-      color: #ddd; /* Light text */
-      border: 1px solid #444; /* Subtle border */
+      background-color: white; /* Dark background */
+      color: #7c7c7c; /* Light text */
+      border: none; 
       border-radius: 8px;
       font-size: 14px;
-      outline: none;
+      font-weight: 600;
       transition: border 0.2s ease, background-color 0.2s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+      #pinterestSearch::placeholder {
+      color: #bebebe; /* Light gray placeholder */
+      opacity: 1; /* Ensure full visibility */
       }
 
       /* Optional: focus effect */
-      .pinterest-row input:focus {
+      /* .pinterest-row input:focus {
       background-color: #222;
       border-color: #666;
-      }
+      } */
 
 
       .pinterest-row button {
@@ -153,6 +171,7 @@
         border: none;
         border-radius: 10px;
         cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
       }
 
       .preview-placeholder {
@@ -195,39 +214,40 @@
 
 
 
-      .label-tag {
-        padding: 0.5rem 0.75rem;
-        border-radius: 16px;
-        /* font-size: 14px; */
-        background-color: #666;
-        color: white;
-        display: inline-block;
-        margin: 0.25rem;
-        max-width: 220px;
-        word-break: break-word;
-        line-height: 1.3;
-      }
+.label-tag {
+  background-color: white !important;  /* Gold background */
+  color: black !important;               /* Dark readable text */
+  border: 2px solid #DEF5F1;             /* Optional: subtle border */
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
 
-      .label-tag .remove {
+
+     .remove {
         margin-left: 0.5rem;
-        color: #bbb;
+        color: black !important;
         cursor: pointer;
         font-weight: bold;
       }
 
       .form-card {
-        background-color: #1b1b1b;
+        background-color: #F4F2F1;
         padding: 1rem;
         border-radius: 10px;
-        border: 1px solid #444;
         margin-bottom: 1rem;
+        color: black;
+        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
       }
 
       .form-card-header {
         font-weight: bold;
         /* font-size: 16px; */
         margin-bottom: 0.5rem;
-        color: #ccc;
+        color: #7c7c7c!important;
       }
 
 
@@ -242,27 +262,32 @@
       }
 
       .output {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         font-family: Arial, sans-serif;
+        font-size: 16px;
+        padding: 12px;
+        font-weight: medium;
         width: 100%;
         height: 100%;
         resize: none;
         /* padding: 1rem; */
         /* font-size: 16px; */
-        background: black;
-        color: #A2A2A2;
+        background: white;
+        color: rgb(39, 39, 39);
         border-radius: 8px;
-        border: 1px solid #555;
+        border: none!important;
         box-sizing: border-box;
         min-height: 100%;
       }
 
       .labels-box {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         width: 100%;
         flex: 0.37;
-        background: black;
+        background: #ffffff;
         color: white;
         border-radius: 8px;
-        border: 1px solid #555;
+        border: 0px solid #F0BD44;
         padding: 1rem;
         border-radius: 10px;
         overflow-y: auto;
@@ -303,10 +328,11 @@
 
       .form-group {
         /* margin-bottom: 1.5rem; */
-        background-color: #111;
+        background-color: #ffffff;
         padding: 1rem;
-        border: 1px solid #444;
+        border: 0px solid #F0BD44;
         border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
       }
 
       .form-group h3 {
@@ -335,7 +361,7 @@
         /* margin-top: 1rem; */
         margin-bottom: 0.5rem;
         font-weight: bold;
-        color: #ccc;
+        
         /* font-size: 20px; */
       }
 
@@ -343,11 +369,19 @@
         width: 100%;
         height: auto;
         padding: 0.5rem;
-        background-color: black;
-        color: #A2A2A2;
-        border: 1px solid #666;
+        background-color: #f4f1f1;
+        /* color: black; */
+        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
+        border: none;
         border-radius: 5px;
       }
+
+      select[multiple]:focus {
+      border: none !important; /* or use #ccc / #999 if you prefer */
+      outline: none !important;
+      }
+      
+    
 
       .label-tag .remove {
         margin-left: 0.5rem;
@@ -369,7 +403,8 @@
     gap: 0.3rem;
     color: #A2A2A2;
     }
-
+    
+    
     
 
     .form-card-header i.fa-pinterest {
@@ -387,7 +422,7 @@
     /* font-size: 22px; */
     margin-top: 0.5rem;
     cursor: pointer;
-    color: white;
+    color: black;
     border-bottom: 2px solid #555;
     padding-bottom: 1rem;
     }
@@ -395,6 +430,7 @@
 
 
 .toggle-icon {
+  color: black!important; /* 🌟 Teal or use #FFD700 for gold */
   font-size: 16px;
   transition: transform 0.2s ease;
 }
@@ -404,7 +440,7 @@
 }
 
 .toggle-icon {
-  color: grey; /* 🌟 Teal or use #FFD700 for gold */
+  color: black!important; /* 🌟 Teal or use #FFD700 for gold */
   font-size: 20px;
   transition: transform 0.2s ease;
 }
@@ -420,6 +456,7 @@
 }
 
 .label-tag {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 0.5rem 0.75rem;
   border-radius: 16px;
   /* font-size: 14px; */
@@ -468,7 +505,7 @@ button {
 }
 
 label {
-  color: #A2A2A2 !important;
+  color: #7c7c7c!important;
   margin-top: 1rem;
 }
 
@@ -506,25 +543,37 @@ margin-top: 0px;
 }
 
 .tab {
+  display: flex;
   flex: 1;
+  background: white;     /* Selected background */
+  color: black;   
+  /* border: 2px solid #F0BD44;  */
   text-align: center;
-  padding: 8px 12px;
-  background: #333;      /* Unselected background */
-  color: #eee;          /* Unselected text */
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;     /* Unselected background */
+  color: black;          /* Unselected text */
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
+  border: none;
 }
 
+
+
 .tab.active {
-  background: white;     /* Selected background */
-  color: black;          /* Selected text */
+  background: #F0BD44;     /* Selected background */
+  color: black;   
+  border: 2px solid #F0BD44;  /* Selected text */
+  
+  border-radius: 8px;
 }
 
 
 .tab:hover {
-  background: #555;
-  color: #fff;
+  background: #F0BD44;
+  color: black;
+  border-color: #F0BD44; 
 }
 
 .tab.active::before {
@@ -553,6 +602,8 @@ margin-top: 0px;
 
 .floating-chatgpt-btn:hover {
   background: #12b087;
+  color: white;
+  border: none;
   transform: translateY(-1px);
 }
 
@@ -572,23 +623,22 @@ margin-top: 0px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #222; /* dark background */
-  border: 1px solid #444;
+  background-color: #DEF5F1; /* dark background */
   border-radius: 6px;
   padding: 0.4rem 0.6rem;
 }
 
 .quantity-label {
-  color: #ddd;
+
+  color: black;
   font-size: 14px;
   flex: 1;
 }
 
 .quantity-input {
   width: 60px;
-  background-color: #111;
-  border: 1px solid #555;
-  color: #fff;
+  background-color: #d8d8d8;
+  color: black;
   padding: 0.3rem;
   border-radius: 4px;
   text-align: center;
@@ -606,22 +656,23 @@ textarea::placeholder {
 
 .floating-btn-container {
   position: absolute;
-  bottom: 16px;
-  right: 16px;
+  bottom: 4px;
+  
+  right: 4px;
   display: flex;
   gap: 10px;
   z-index: 10;
 }
 
 .floating-chatgpt-btn {
-  background: #10a37f;
-  color: white;
+  background: #DEF5F1;
+  color: black;
   padding: 8px 14px;
-  border: none;
+  border: 2px solid #74d8c7;
   border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
   transition: background 0.2s ease, transform 0.1s ease;
   position: relative; /* override old absolute */
 }
@@ -629,7 +680,9 @@ textarea::placeholder {
 
 
 .floating-chatgpt-btn.reset-btn {
-  background-color: #444;
+  background-color: #7c7c7c;
+  color: white;
+  border: none;
 }
 
 
@@ -655,18 +708,35 @@ textarea::placeholder {
   max-width: 300px;
 }
 
+.tab {
+  text-decoration: none !important; /* removes any underline */
+  -webkit-text-decoration-skip: objects;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid #F2E0B7;
+}
+
+.search-wrapper Input {
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
+  background-color: #F4F2F1!important;
+  border: none!important;
+  color: black!important;
+}
+
 
 
         </style>
       </head>
       <body>
       <!-- <h1>Photorealistic Office Render Prompt Builder</h1> -->
-       <div class="tab-bar">
-         <div class="tab "id="Client">Client Persona</div>
-         <div class="tab " id="Zoning" >Zoning Insights</div>
-         <div class="tab" id="Design">Design Concept</div>
-         <div class="tab active">Material Board</div>
-       </div>
+      <div class="tab-bar">
+        <!-- <a class="tab" href="Meeting_Assistant.html" id="Meeting">Meeting Assistant</a> -->
+        <a class="tab" href="index.html" id="Client">Client Persona</a>
+        <a class="tab" href="Zoning_insights.html" id="Zoning">Zoning Insights</a>
+        <a class="tab" href="Design_Concept.html" id="Design">Design Concept</a>
+        <a class="tab active" href="Material.html" id="Material">Material Board</a>
+        <!-- <a class="tab" href="Render_Creator.html" id="Canvas">Render Creator</a> -->
+      </div>
+
        <div class="container">
          <div class="scrollable-form">
            <div id="formContainer" class="form-section"></div>
@@ -725,13 +795,36 @@ textarea::placeholder {
 
 
 
+// function resetAllFields() {
+//   if (confirm("Clear all fields and reset the form?")) {
+//     localStorage.clear(); // fully clear all keys
+//     sessionStorage.setItem('resetNow', 'true'); // temporary flag
+//     location.reload(); // force reload
+//   }
+// }
+
 function resetAllFields() {
   if (confirm("Clear all fields and reset the form?")) {
-    localStorage.clear(); // fully clear all keys
-    sessionStorage.setItem('resetNow', 'true'); // temporary flag
-    location.reload(); // force reload
+    // Clear localStorage
+    localStorage.clear();
+
+    // Clear Dexie for this tabId
+    const db = new Dexie("PromptBuilderDB");
+    db.version(1).stores({
+      formStates: "++id, tabId, timestamp"
+    });
+
+    const tabId = sessionStorage.getItem('tabId');
+    db.formStates.where('tabId').equals(tabId).delete().then(() => {
+      sessionStorage.setItem('resetNow', 'true');
+      location.reload();
+    });
   }
 }
+
+
+
+
 
 
 
@@ -788,32 +881,32 @@ document.addEventListener('input', saveToDexie);
 
 
 
-window.addEventListener('beforeunload', (event) => {
-  if (window.skipUnloadWarning) return; // Allow silent navigation when flag is set
+// window.addEventListener('beforeunload', (event) => {
+//   if (window.skipUnloadWarning) return; // Allow silent navigation when flag is set
 
-  const savedData = JSON.parse(localStorage.getItem('formValues') || '{}');
+//   const savedData = JSON.parse(localStorage.getItem('formValues') || '{}');
 
-  const isFormDirty = Array.from(document.querySelectorAll('select, textarea'))
-    .some(el => {
-      const key = el.getAttribute('data-header') || el.id;
-      if (!key) return false;
+//   const isFormDirty = Array.from(document.querySelectorAll('select, textarea'))
+//     .some(el => {
+//       const key = el.getAttribute('data-header') || el.id;
+//       if (!key) return false;
 
-      const savedVal = savedData[key];
+//       const savedVal = savedData[key];
 
-      if (el.tagName === 'SELECT' && el.multiple) {
-        const currentVal = Array.from(el.selectedOptions).map(opt => opt.value);
-        return JSON.stringify(currentVal) !== JSON.stringify(savedVal || []);
-      } else {
-        const currentVal = (el.value || '').trim();
-        return currentVal !== (savedVal || '').trim();
-      }
-    });
+//       if (el.tagName === 'SELECT' && el.multiple) {
+//         const currentVal = Array.from(el.selectedOptions).map(opt => opt.value);
+//         return JSON.stringify(currentVal) !== JSON.stringify(savedVal || []);
+//       } else {
+//         const currentVal = (el.value || '').trim();
+//         return currentVal !== (savedVal || '').trim();
+//       }
+//     });
 
-  if (isFormDirty) {
-    event.preventDefault();       // Required for some browsers
-    event.returnValue = '';       // Required for Chrome + modern browsers
-  }
-});
+//   if (isFormDirty) {
+//     event.preventDefault();       // Required for some browsers
+//     event.returnValue = '';       // Required for Chrome + modern browsers
+//   }
+// });
 
 
 
@@ -849,7 +942,8 @@ window.addEventListener('beforeunload', (event) => {
 
  
 
-
+// document.getElementById("Meeting").addEventListener("click", function() {
+//   window.location.href = "Meeting_Assistant.html"});
 
 
 
@@ -862,6 +956,10 @@ window.addEventListener('beforeunload', (event) => {
   document.getElementById("Design").addEventListener("click", function() {
   window.location.href = "Design_Concept.html"});
 
+  // document.getElementById("Canvas").addEventListener("click", function() {
+  // window.location.href = "Render_Creator.html"});
+
+ 
 
 
 
@@ -1018,7 +1116,7 @@ window.pinterestBlockFlags = data[3].map((_, i) => {
         header.innerHTML = `
   ${parent}
   <img 
-    src="data:image/png;base64,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" 
+    src="data:image/png;base64,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" 
     class="toggle-icon" 
     style="float:right;cursor:pointer;width:16px;height:16px;transition:transform 0.2s ease;"
   >`;
@@ -1882,26 +1980,55 @@ if (!optionQuantities[fieldId][val]) {
           document.querySelector('#searchBoxContainer input').value = keywords;
     }
 
-      function removeLabel(fieldIdOrLabel, valueToRemove) {
+//       function removeLabel(fieldIdOrLabel, valueToRemove) {
+//   const fieldKey = normalizeId(fieldIdOrLabel); // always normalize
+//   const el = document.getElementById(fieldKey);
+
+//   // --- Update localStorage safely ---
+//   const saved = JSON.parse(localStorage.getItem('formValues') || '{}');
+
+//   // Match key in storage using exact match OR normalized key
+//   let matchedKey = Object.keys(saved).find(key => normalizeId(key) === fieldKey);
+
+//   if (matchedKey && saved[matchedKey]) {
+//     const current = saved[matchedKey];
+//     if (Array.isArray(current)) {
+//       saved[matchedKey] = current.filter(v => v !== valueToRemove);
+//       if (saved[matchedKey].length === 0) delete saved[matchedKey];
+//     } else if (typeof current === 'string' && current.trim() === valueToRemove) {
+//       delete saved[matchedKey];
+//     }
+
+//     localStorage.setItem('formValues', JSON.stringify(saved));
+//   }
+
+//   // --- Update UI if field is present ---
+//   if (el) {
+//     if (el.tagName === 'SELECT' && el.multiple) {
+//       Array.from(el.options).forEach(opt => {
+//         if (opt.value === valueToRemove) opt.selected = false;
+//       });
+//     } else if (el.tagName === 'TEXTAREA') {
+//       if (el.value.trim() === valueToRemove) el.value = '';
+//     }
+
+//     // Trigger reactive updates
+//     updateStructuredView();
+//     generatePrompt();
+//     updatePinterestQuery();
+//   }
+// }
+
+function removeLabel(fieldIdOrLabel, valueToRemove) {
   const fieldKey = normalizeId(fieldIdOrLabel); // always normalize
   const el = document.getElementById(fieldKey);
 
-  // --- Update localStorage safely ---
-  const saved = JSON.parse(localStorage.getItem('formValues') || '{}');
-
-  // Match key in storage using exact match OR normalized key
-  let matchedKey = Object.keys(saved).find(key => normalizeId(key) === fieldKey);
-
-  if (matchedKey && saved[matchedKey]) {
-    const current = saved[matchedKey];
-    if (Array.isArray(current)) {
-      saved[matchedKey] = current.filter(v => v !== valueToRemove);
-      if (saved[matchedKey].length === 0) delete saved[matchedKey];
-    } else if (typeof current === 'string' && current.trim() === valueToRemove) {
-      delete saved[matchedKey];
+  // --- Remove from Dexie in-memory optionQuantities ---
+  if (window.optionQuantities?.[fieldKey]) {
+    delete window.optionQuantities[fieldKey][valueToRemove];
+    if (Object.keys(window.optionQuantities[fieldKey]).length === 0) {
+      delete window.optionQuantities[fieldKey];
     }
-
-    localStorage.setItem('formValues', JSON.stringify(saved));
   }
 
   // --- Update UI if field is present ---
@@ -1914,13 +2041,17 @@ if (!optionQuantities[fieldId][val]) {
       if (el.value.trim() === valueToRemove) el.value = '';
     }
 
-    // Trigger reactive updates
-    updateStructuredView();
-    generatePrompt();
-    updatePinterestQuery();
+    // Force refresh
+    const event = new Event('change', { bubbles: true });
+    el.dispatchEvent(event);
   }
-}
 
+  // Update all views and storage
+  generatePrompt();
+  updateStructuredView();
+  updatePinterestQuery();
+  saveToDexie();
+}
 
 
 

@@ -14,7 +14,7 @@
             /* font-size: 18px; */
             padding: 1rem;
             background-color: #f4f2f1;
-            color: white; 
+            color: white;
             overflow: hidden;
           }
 
@@ -151,8 +151,10 @@
       transition: border 0.2s ease, background-color 0.2s ease;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
       }
-
- 
+      #pinterestSearch::placeholder {
+      color: #bebebe; /* Light gray placeholder */
+      opacity: 1; /* Ensure full visibility */
+      }
 
       /* Optional: focus effect */
       /* .pinterest-row input:focus {
@@ -368,8 +370,8 @@
         height: auto;
         padding: 0.5rem;
         background-color: #f4f1f1;
-        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
         /* color: black; */
+        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
         border: none;
         border-radius: 5px;
       }
@@ -720,10 +722,6 @@ textarea::placeholder {
   color: black!important;
 }
 
-#pinterestSearch::placeholder {
-  color: #bebebe; /* Light gray placeholder */
-  opacity: 1;  /* Ensure full visibility */
-}
 
 
         </style>
@@ -732,11 +730,11 @@ textarea::placeholder {
       <!-- <h1>Photorealistic Office Render Prompt Builder</h1> -->
        <div class="tab-bar">
          <!-- <a class="tab" href="Meeting_Assistant.html" id="Meeting">Meeting Assistant</a> -->
-         <a class="tab active" href="index.html">Client Persona</a>
+         <a class="tab" href="index.html" id="Client">Client Persona</a>
          <a class="tab" href="Zoning_insights.html" id="Zoning">Zoning Insights</a>
          <a class="tab" href="Design_Concept.html" id="Design">Design Concept</a>
          <a class="tab" href="Material.html" id="Material">Material Board</a>
-         <!-- <a class="tab" href="Render_Creator.html" id="Canvas">Render Creator</a> -->
+         <a class="tab active" href="Render_Creator.html" id="Canvas">Render Creator</a>
        </div>
 
        <div class="container">
@@ -755,7 +753,7 @@ textarea::placeholder {
                   Reset All
                  </button>
                  <button class="floating-chatgpt-btn" id="openCustomGPT">
-                  Create with AI
+                   Create with AI
                  </button>
                </div>
 
@@ -804,6 +802,9 @@ textarea::placeholder {
 //     location.reload(); // force reload
 //   }
 // }
+
+
+
 
 
 function resetAllFields() {
@@ -879,32 +880,36 @@ document.addEventListener('input', saveToDexie);
 
 
 
-// window.addEventListener('beforeunload', (event) => {
-//   if (window.skipUnloadWarning) return; // Allow silent navigation when flag is set
+window.addEventListener('beforeunload', (event) => {
+  if (window.skipUnloadWarning) return; // Allow silent navigation when flag is set
 
-//   const savedData = JSON.parse(localStorage.getItem('formValues') || '{}');
+  const savedData = JSON.parse(localStorage.getItem('formValues') || '{}');
 
-//   const isFormDirty = Array.from(document.querySelectorAll('select, textarea'))
-//     .some(el => {
-//       const key = el.getAttribute('data-header') || el.id;
-//       if (!key) return false;
+  const isFormDirty = Array.from(document.querySelectorAll('select, textarea'))
+    .some(el => {
+      const key = el.getAttribute('data-header') || el.id;
+      if (!key) return false;
 
-//       const savedVal = savedData[key];
+      const savedVal = savedData[key];
 
-//       if (el.tagName === 'SELECT' && el.multiple) {
-//         const currentVal = Array.from(el.selectedOptions).map(opt => opt.value);
-//         return JSON.stringify(currentVal) !== JSON.stringify(savedVal || []);
-//       } else {
-//         const currentVal = (el.value || '').trim();
-//         return currentVal !== (savedVal || '').trim();
-//       }
-//     });
+      if (el.tagName === 'SELECT' && el.multiple) {
+        const currentVal = Array.from(el.selectedOptions).map(opt => opt.value);
+        return JSON.stringify(currentVal) !== JSON.stringify(savedVal || []);
+      } else {
+        const currentVal = (el.value || '').trim();
+        return currentVal !== (savedVal || '').trim();
+      }
+    });
 
-//   if (isFormDirty) {
-//     event.preventDefault();       // Required for some browsers
-//     event.returnValue = '';       // Required for Chrome + modern browsers
-//   }
-// });
+  if (isFormDirty) {
+    event.preventDefault();       // Required for some browsers
+    event.returnValue = '';       // Required for Chrome + modern browsers
+  }
+});
+
+
+
+
 
 
 
@@ -937,42 +942,42 @@ document.addEventListener('input', saveToDexie);
  
 
 
-  //         document.getElementById("Meeting").addEventListener("click", function() {
-  // window.location.href = "Meeting_Assistant.html"});
+// document.getElementById("Meeting").addEventListener("click", function() {
+//   window.location.href = "Meeting_Assistant.html"});
 
-          document.getElementById("Zoning").addEventListener("click", function() {
+
+       document.getElementById("Client").addEventListener("click", function() {
+  window.location.href = "index.html"});
+
+  document.getElementById("Zoning").addEventListener("click", function() {
   window.location.href = "Zoning_insights.html"});
-
+  
   document.getElementById("Design").addEventListener("click", function() {
   window.location.href = "Design_Concept.html"});
 
-  // document.getElementById("Canvas").addEventListener("click", function() {
-  // window.location.href = "Render_Creator.html"});
-  
   document.getElementById("Material").addEventListener("click", function() {
-  window.location.href = "Material.html";
-
-  
-});
+  window.location.href = "Material.html"});
 
 
-    document.getElementById("openCustomGPT").addEventListener("click", function () {
+
+
+         document.getElementById("openCustomGPT").addEventListener("click", function () {
 const prompt = document.getElementById("finalPrompt").value.trim();
 if (!prompt) {
 alert("Prompt is empty!");
 return;
 }
 
-
 // Copy to clipboard first
 navigator.clipboard.writeText(prompt).then(() => {
-const customGPTURL = "https://chatgpt.com/g/g-686e0c310aac81919183673ef60ae018-1-client-persona-gpt";
+const customGPTURL = "https://chatgpt.com/g/g-686e2f64287081919d96a2dec8206a55-4-material-board";
 window.open(customGPTURL, "_blank");
 alert("✅ Prompt copied to clipboard. Just paste (Ctrl+V) into the chat.");
 }).catch(() => {
 alert("❌ Failed to copy prompt. Please copy it manually.");
 });
 });
+
 
 
 
@@ -1048,7 +1053,7 @@ alert("❌ Failed to copy prompt. Please copy it manually.");
       }
         
       // const sheetURL = 'https://docs.google.com/spreadsheets/d/1qXN1MR1pW3laS1wH_FI3vPblg3ANcqCMWVoGl0H7wek/export?format=csv';
-      const sheetURL = 'https://docs.google.com/spreadsheets/d/1TtxfPpIIYBjzP32-9n9snZbNoCU69mSvYVbA3uAgGcY/export?format=csv&gid=1235944600';
+      const sheetURL = 'https://docs.google.com/spreadsheets/d/1TtxfPpIIYBjzP32-9n9snZbNoCU69mSvYVbA3uAgGcY/export?format=csv&gid=1629508631';
 
 
 
@@ -1973,47 +1978,46 @@ if (!optionQuantities[fieldId][val]) {
           document.querySelector('#searchBoxContainer input').value = keywords;
     }
 
-      // function removeLabel(fieldIdOrLabel, valueToRemove) {
-      // const fieldKey = normalizeId(fieldIdOrLabel); // always normalize
-      // const el = document.getElementById(fieldKey);
+//       function removeLabel(fieldIdOrLabel, valueToRemove) {
+//   const fieldKey = normalizeId(fieldIdOrLabel); // always normalize
+//   const el = document.getElementById(fieldKey);
 
-      // // --- Update localStorage safely ---
-      // const saved = JSON.parse(localStorage.getItem('formValues') || '{}');
+//   // --- Update localStorage safely ---
+//   const saved = JSON.parse(localStorage.getItem('formValues') || '{}');
 
-      // // Match key in storage using exact match OR normalized key
-      // let matchedKey = Object.keys(saved).find(key => normalizeId(key) === fieldKey);
+//   // Match key in storage using exact match OR normalized key
+//   let matchedKey = Object.keys(saved).find(key => normalizeId(key) === fieldKey);
 
-      // if (matchedKey && saved[matchedKey]) {
-      // const current = saved[matchedKey];
-      // if (Array.isArray(current)) {
-      // saved[matchedKey] = current.filter(v => v !== valueToRemove);
-      // if (saved[matchedKey].length === 0) delete saved[matchedKey];
-      // } else if (typeof current === 'string' && current.trim() === valueToRemove) {
-      // delete saved[matchedKey];
-      // }
+//   if (matchedKey && saved[matchedKey]) {
+//     const current = saved[matchedKey];
+//     if (Array.isArray(current)) {
+//       saved[matchedKey] = current.filter(v => v !== valueToRemove);
+//       if (saved[matchedKey].length === 0) delete saved[matchedKey];
+//     } else if (typeof current === 'string' && current.trim() === valueToRemove) {
+//       delete saved[matchedKey];
+//     }
 
-      // localStorage.setItem('formValues', JSON.stringify(saved));
-      // }
+//     localStorage.setItem('formValues', JSON.stringify(saved));
+//   }
 
-      // // --- Update UI if field is present ---
-      // if (el) {
-      // if (el.tagName === 'SELECT' && el.multiple) {
-      // Array.from(el.options).forEach(opt => {
-      // if (opt.value === valueToRemove) opt.selected = false;
-      // });
-      // } else if (el.tagName === 'TEXTAREA') {
-      // if (el.value.trim() === valueToRemove) el.value = '';
-      // }
+//   // --- Update UI if field is present ---
+//   if (el) {
+//     if (el.tagName === 'SELECT' && el.multiple) {
+//       Array.from(el.options).forEach(opt => {
+//         if (opt.value === valueToRemove) opt.selected = false;
+//       });
+//     } else if (el.tagName === 'TEXTAREA') {
+//       if (el.value.trim() === valueToRemove) el.value = '';
+//     }
 
-      // // Trigger reactive updates
-      // updateStructuredView();
-      // generatePrompt();
-      // updatePinterestQuery();
-      // }
-      // }
+//     // Trigger reactive updates
+//     updateStructuredView();
+//     generatePrompt();
+//     updatePinterestQuery();
+//   }
+// }
 
-
-      function removeLabel(fieldIdOrLabel, valueToRemove) {
+    function removeLabel(fieldIdOrLabel, valueToRemove) {
   const fieldKey = normalizeId(fieldIdOrLabel); // always normalize
   const el = document.getElementById(fieldKey);
 
